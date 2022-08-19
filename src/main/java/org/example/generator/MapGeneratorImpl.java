@@ -3,14 +3,95 @@ package org.example.generator;
 import java.lang.reflect.Array;
 import java.util.*;
 
-public class MapGeneratorImpl extends AbstractMapGenerator {
+public class MapGeneratorImpl implements MapGenerator{
+    private final int WIDTH;
+    private final int HEIGHT;
+    private final int MAX_ROOMS;
+    private final int MIN_ROOM_XY;
+    private final int MAX_ROOM_XY;
+    private final boolean ROOMS_OVERLAP;
+    private final int RANDOM_CONNECTIONS;
+    private final int RANDOM_SPURS;
+    private final List<Tile> TILES;
+    private final Tile[][] LEVEL;
+    private final List<int[]> ROOM_LIST;
+    private final List<int[][]> CORRIDOR_LIST;
+    private final List<String> TILES_LEVEL;
+    private final Random RANDOM = new Random((System.currentTimeMillis() / 1000L));
 
-    public MapGeneratorImpl(int WIDTH, int HEIGHT, int MAX_ROOMS, int MIN_ROOM_XY, int MAX_ROOM_XY, boolean ROOMS_OVERLAP, int RANDOM_CONNECTIONS, int RANDOM_SPURS) {
-        super(WIDTH, HEIGHT, MAX_ROOMS, MIN_ROOM_XY, MAX_ROOM_XY, ROOMS_OVERLAP, RANDOM_CONNECTIONS, RANDOM_SPURS);
+    public int getWIDTH() {
+        return WIDTH;
     }
 
-    @Override
-    protected int[] genRoom() {
+    public int getHEIGHT() {
+        return HEIGHT;
+    }
+
+    public int getMAX_ROOMS() {
+        return MAX_ROOMS;
+    }
+
+    public int getMIN_ROOM_XY() {
+        return MIN_ROOM_XY;
+    }
+
+    public int getMAX_ROOM_XY() {
+        return MAX_ROOM_XY;
+    }
+
+    public boolean isROOMS_OVERLAP() {
+        return ROOMS_OVERLAP;
+    }
+
+    public int getRANDOM_CONNECTIONS() {
+        return RANDOM_CONNECTIONS;
+    }
+
+    public int getRANDOM_SPURS() {
+        return RANDOM_SPURS;
+    }
+
+    public List<Tile> getTILES() {
+        return TILES;
+    }
+
+    public Tile[][] getLEVEL() {
+        return LEVEL;
+    }
+
+    public List<int[]> getROOM_LIST() {
+        return ROOM_LIST;
+    }
+
+    public List<int[][]> getCORRIDOR_LIST() {
+        return CORRIDOR_LIST;
+    }
+
+    public List<String> getTILES_LEVEL() {
+        return TILES_LEVEL;
+    }
+
+    public Random getRANDOM() {
+        return RANDOM;
+    }
+
+    public MapGeneratorImpl(int WIDTH, int HEIGHT, int MAX_ROOMS, int MIN_ROOM_XY, int MAX_ROOM_XY, boolean ROOMS_OVERLAP, int RANDOM_CONNECTIONS, int RANDOM_SPURS) {
+        this.WIDTH = WIDTH;
+        this.HEIGHT = HEIGHT;
+        this.MAX_ROOMS = MAX_ROOMS;
+        this.MIN_ROOM_XY = MIN_ROOM_XY;
+        this.MAX_ROOM_XY = MAX_ROOM_XY;
+        this.ROOMS_OVERLAP = ROOMS_OVERLAP;
+        this.RANDOM_CONNECTIONS = RANDOM_CONNECTIONS;
+        this.RANDOM_SPURS = RANDOM_SPURS;
+        this.TILES = new ArrayList<>(Arrays.asList(Tile.STONE, Tile.FLOOR, Tile.WALL));
+        this.LEVEL = new Tile[this.WIDTH][this.HEIGHT];
+        this.ROOM_LIST = new ArrayList<>();
+        this.CORRIDOR_LIST = new ArrayList<>();
+        this.TILES_LEVEL = new ArrayList<>();
+    }
+
+    private int[] genRoom() {
         int w = getRANDOM().nextInt(getMIN_ROOM_XY(), getMAX_ROOM_XY() + 1);
         int h = getRANDOM().nextInt(getMIN_ROOM_XY(), getMAX_ROOM_XY() + 1);
         int x = getRANDOM().nextInt(1, (getWIDTH() - w));
@@ -18,8 +99,7 @@ public class MapGeneratorImpl extends AbstractMapGenerator {
         return new int[]{x, y, w, h};
     }
 
-    @Override
-    protected boolean roomOverlapping(int[] room, List<int[]> roomList) {
+    private boolean roomOverlapping(int[] room, List<int[]> roomList) {
         int x = room[0];
         int y = room[1];
         int w = room[2];
@@ -36,8 +116,7 @@ public class MapGeneratorImpl extends AbstractMapGenerator {
         return false;
     }
 
-    @Override
-    protected int[][] corridorBetweenPoints(int x1, int y1, int x2, int y2, JoinType joinType) {
+    private int[][] corridorBetweenPoints(int x1, int y1, int x2, int y2, JoinType joinType) {
         if ((x1 == x2 && y1 == y2) || (x1 == x2) || (y1 == y2)) {
             return new int[][]{{x1, y1}, {x2, y2}};
         }
@@ -80,8 +159,7 @@ public class MapGeneratorImpl extends AbstractMapGenerator {
         return new int[][]{{x1, y1}, {x2, y1}, {x2, y2}};
     }
 
-    @Override
-    protected void joinRooms(int[] roomOne, int[] roomTwo, JoinType joinType) {
+    private void joinRooms(int[] roomOne, int[] roomTwo, JoinType joinType) {
         int x1, y1, w1, h1, x1_2, y1_2;
         int x2, y2, w2, h2, x2_2, y2_2;
         int jx1, jx2, jy1, jy2;
@@ -177,7 +255,6 @@ public class MapGeneratorImpl extends AbstractMapGenerator {
         }
     }
 
-    @Override
     public void genLevel() {
         for (int i = 0; i < getHEIGHT(); i++) {
             for (int j = 0; j < getWIDTH(); j++) {
@@ -298,7 +375,6 @@ public class MapGeneratorImpl extends AbstractMapGenerator {
         }
     }
 
-    @Override
     public void genTilesLevel() {
         for (Tile[] row : getLEVEL()) {
             List<String> tmpTiles = new ArrayList<>();
