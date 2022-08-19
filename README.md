@@ -61,3 +61,5 @@ EXAMPLE MAP:
  #........#                  #.#                                
  ##########                  ###                                
 ```
+
+based on python code: https://pastebin.com/zehq4vMM
