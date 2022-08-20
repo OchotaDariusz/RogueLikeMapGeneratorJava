@@ -1,9 +1,8 @@
 package org.example.generator;
 
-import java.lang.reflect.Array;
 import java.util.*;
 
-public class MapGeneratorImpl implements MapGenerator{
+public class MapGeneratorImpl implements MapGenerator {
     private final int WIDTH;
     private final int HEIGHT;
     private final int MAX_ROOMS;
@@ -117,24 +116,18 @@ public class MapGeneratorImpl implements MapGenerator{
     }
 
     private int[][] corridorBetweenPoints(int x1, int y1, int x2, int y2, JoinType joinType) {
+        //noinspection ConditionCoveredByFurtherCondition
         if ((x1 == x2 && y1 == y2) || (x1 == x2) || (y1 == y2)) {
             return new int[][]{{x1, y1}, {x2, y2}};
         }
-        JoinType join = null;
+        JoinType join = joinType;
 
-        Set<int[]> setA = new HashSet<>();
-        Set<int[]> setB = new HashSet<>();
-        Set<int[]> setC = new HashSet<>();
-        Set<int[]> setD = new HashSet<>();
-        Set<int[]> setE = new HashSet<>();
-        Set<int[]> setF = new HashSet<>();
-        setA.add(new int[]{0, 1});
-        setB.add(new int[]{x1, x2, y1, y2});
-        setC.add(new int[]{getWIDTH() - 1, getWIDTH() - 2});
-        setD.add(new int[]{x1, x2});
-        setE.add(new int[]{getHEIGHT() - 1, getHEIGHT() - 2});
-        setF.add(new int[]{y1, y2});
-
+        Set<int[]> setA = new HashSet<>(Collections.singleton(new int[]{0, 1}));
+        Set<int[]> setB = new HashSet<>(Collections.singleton(new int[]{x1, x2, y1, y2}));
+        Set<int[]> setC = new HashSet<>(Collections.singleton(new int[]{getWIDTH() - 1, getWIDTH() - 2}));
+        Set<int[]> setD = new HashSet<>(Collections.singleton(new int[]{x1, x2}));
+        Set<int[]> setE = new HashSet<>(Collections.singleton(new int[]{getHEIGHT() - 1, getHEIGHT() - 2}));
+        Set<int[]> setF = new HashSet<>(Collections.singleton(new int[]{y1, y2}));
 
         if (joinType.equals(JoinType.EITHER) && setA.retainAll(setB)) {
             join = JoinType.BOTTOM;
@@ -146,8 +139,6 @@ public class MapGeneratorImpl implements MapGenerator{
             } else {
                 join = JoinType.BOTTOM;
             }
-        } else {
-            join = joinType;
         }
 
         if (join.equals(JoinType.TOP)) {
@@ -155,7 +146,6 @@ public class MapGeneratorImpl implements MapGenerator{
         } else if (join.equals(JoinType.BOTTOM)) {
             return new int[][]{{x1, y1}, {x2, y1}, {x2, y2}};
         }
-
         return new int[][]{{x1, y1}, {x2, y1}, {x2, y2}};
     }
 
@@ -189,7 +179,6 @@ public class MapGeneratorImpl implements MapGenerator{
             Arrays.sort(tmpY);
             jy1 = tmpY[1] + 1;
             jy2 = tmpY[2] - 1;
-
             corridors = corridorBetweenPoints(jx1, jy1, jx2, jy2, joinType);
             getCORRIDOR_LIST().add(corridors);
         } else if (y1 < (y2 + h2) && y2 < (y1 + h1)) {
@@ -208,15 +197,13 @@ public class MapGeneratorImpl implements MapGenerator{
             corridors = corridorBetweenPoints(jx1, jy1, jx2, jy2, joinType);
             getCORRIDOR_LIST().add(corridors);
         } else {
-            JoinType join = null;
+            JoinType join = joinType;
             if (joinType.equals(JoinType.EITHER)) {
                 if (getRANDOM().nextInt(1, 3) == 1) {
                     join = JoinType.TOP;
                 } else {
                     join = JoinType.BOTTOM;
                 }
-            } else {
-                join = joinType;
             }
 
             if (join.equals(JoinType.TOP)) {
