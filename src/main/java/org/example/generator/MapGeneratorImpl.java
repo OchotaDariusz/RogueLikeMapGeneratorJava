@@ -16,7 +16,7 @@ public class MapGeneratorImpl implements MapGenerator {
     private final List<int[]> ROOM_LIST;
     private final List<int[][]> CORRIDOR_LIST;
     private final List<String> TILES_LEVEL;
-    private final Random RANDOM = new Random((System.currentTimeMillis() / 1000L));
+    private final Random RANDOM = new Random();
 
     public int getWIDTH() {
         return WIDTH;
